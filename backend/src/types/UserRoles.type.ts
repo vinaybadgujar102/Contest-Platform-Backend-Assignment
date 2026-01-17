@@ -1,4 +1,1 @@
-export enum UserRole {
-  CREATOR = "creator",
-  CONTESTEE = "contestee",
-}
+export type UserRole = "creator" | "contestee";

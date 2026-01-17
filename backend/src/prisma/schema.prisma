@@ -14,8 +14,8 @@ datasource db {
 }
 
 enum Role {
-  CREATOR
-  CONTESTEE // Fixed typo: was CONSTESTEE
+  CREATOR   @map("creator")
+  CONTESTEE @map("contestee")
 }
 
 model User {
@@ -23,7 +23,7 @@ model User {
   name            String
   email           String          @unique
   password        String
-  role            Role
+  role            Role            @default(CONTESTEE)
   createdAt       DateTime        @default(now()) @map("created_at")
   contestsCreated Contest[]       @relation("ContestCreator")
   mcqSubmissions  McqSubmission[]
