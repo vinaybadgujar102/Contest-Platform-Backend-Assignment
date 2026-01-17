@@ -14,6 +14,30 @@ type CreateResponse = {
   endTime: string;
 };
 
+type GetContestByIdWithProblemType = {
+  id: number;
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  creatorId: number;
+  mcqs: {
+    id: number;
+    questionText: string;
+    options: string[];
+    points: number;
+  }[];
+  dsaProblems: {
+    id: number;
+    title: string;
+    description: string;
+    tags: string[];
+    points: number;
+    timeLimit: number;
+    memoryLimit: number;
+  }[];
+};
+
 const contestService = new ContestService(new ContestRepository());
 
 export const ContestController = {
@@ -30,5 +54,21 @@ export const ContestController = {
       endTime: new Date(endTime).toISOString(),
       creatorId,
     });
+  },
+
+  async getContestById(req: Request, res: Response) {
+    const contestId = Number(req.params.contestId);
+    const userRole = req.user!.role;
+
+    const contest = await contestService.getContestByIdWithProblems(
+      contestId,
+      userRole,
+    );
+
+    successResponse<GetContestByIdWithProblemType>(
+      res,
+      StatusCodes.OK,
+      contest,
+    );
   },
 };

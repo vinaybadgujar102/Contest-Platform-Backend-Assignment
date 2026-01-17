@@ -45,3 +45,15 @@ export class ForbiddenError extends AppError {
     Object.setPrototypeOf(this, ForbiddenError.prototype);
   }
 }
+
+export class NotFoundError extends AppError {
+  override statusCode: number;
+  override errorCode: string;
+
+  constructor(errorCode: string) {
+    super();
+    this.errorCode = errorCode;
+    this.statusCode = StatusCodes.NOT_FOUND;
+    Object.setPrototypeOf(this, NotFoundError.prototype);
+  }
+}
