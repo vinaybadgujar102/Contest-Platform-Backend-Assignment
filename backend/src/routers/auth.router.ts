@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { schemaValidator } from "../validators";
-import { signupSchema } from "../validators/auth.validator";
+import { loginSchema, signupSchema } from "../validators/auth.validator";
 import { AuthController } from "../controllers/auth.controller";
 
 const authRouter = Router();
@@ -10,5 +10,7 @@ authRouter.post(
   schemaValidator(signupSchema),
   AuthController.signUp,
 );
+
+authRouter.post("/login", schemaValidator(loginSchema), AuthController.login);
 
 export default authRouter;

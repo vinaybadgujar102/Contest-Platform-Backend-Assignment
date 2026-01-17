@@ -1,17 +1,35 @@
 import { StatusCodes } from "http-status-codes";
 
-export interface AppError extends Error {
-  statusCode: number;
+export abstract class AppError extends Error {
+  abstract statusCode: number;
+  abstract errorCode: string;
+
+  constructor() {
+    super();
+    Object.setPrototypeOf(this, AppError.prototype);
+  }
 }
 
-export class BadRequestError implements AppError {
+export class BadRequestError extends AppError {
   statusCode: number;
-  name: string;
-  message: string;
+  errorCode: string;
 
-  constructor(name: string) {
+  constructor(errorCode: string) {
+    super();
+    this.errorCode = errorCode;
     this.statusCode = StatusCodes.BAD_REQUEST;
-    this.name = name;
-    this.message = "BAD_REQUEST";
+    Object.setPrototypeOf(this, BadRequestError.prototype);
+  }
+}
+
+export class UnAuthorizedError extends AppError {
+  statusCode: number;
+  errorCode: string;
+
+  constructor(errorCode: string) {
+    super();
+    this.errorCode = errorCode;
+    this.statusCode = StatusCodes.BAD_REQUEST;
+    Object.setPrototypeOf(this, UnAuthorizedError.prototype);
   }
 }
