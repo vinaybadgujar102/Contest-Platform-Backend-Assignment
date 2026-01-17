@@ -33,3 +33,15 @@ export class UnAuthorizedError extends AppError {
     Object.setPrototypeOf(this, UnAuthorizedError.prototype);
   }
 }
+
+export class ForbiddenError extends AppError {
+  statusCode: number;
+  errorCode: string;
+
+  constructor(errorCode: string) {
+    super();
+    this.statusCode = StatusCodes.FORBIDDEN;
+    this.errorCode = errorCode;
+    Object.setPrototypeOf(this, ForbiddenError.prototype);
+  }
+}

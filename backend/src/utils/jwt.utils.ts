@@ -6,6 +6,11 @@ export type AuthPayload = {
   role: UserRoleType;
 };
 
+export const verifyToken = (token: string): AuthPayload => {
+  const decoded = jwt.verify(token, "secret") as AuthPayload;
+  return decoded;
+};
+
 export const generateToken = (payload: AuthPayload) => {
   try {
     const token = jwt.sign(payload, "secret");
