@@ -13,7 +13,7 @@ type SignupResponse = {
   id: number;
   name: string;
   email: string;
-  role: UserRole;
+  role: "creator" | "contestee";
 };
 
 authRouter.post(
