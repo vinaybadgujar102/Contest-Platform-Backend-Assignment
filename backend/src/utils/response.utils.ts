@@ -12,3 +12,15 @@ export function successResponse<T>(
     error: null,
   });
 }
+
+export function errorResponse(
+  res: Response,
+  statusCode: StatusCodes,
+  errorCode: string,
+) {
+  return res.status(statusCode).json({
+    success: true,
+    data: null,
+    error: errorCode,
+  });
+}
