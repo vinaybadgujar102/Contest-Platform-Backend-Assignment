@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CREATOR
+  CONTESTEE // Fixed typo: was CONSTESTEE
+}
+
+model User {
+  id              Int             @id @default(autoincrement())
+  name            String
+  email           String          @unique
+  password        String
+  role            Role
+  createdAt       DateTime        @default(now()) @map("created_at")
+  contestsCreated Contest[]       @relation("ContestCreator")
+  mcqSubmissions  McqSubmission[]
+  dsaSubmissions  DsaSubmission[]
+
+  @@map("users")
+}
+
+model Contest {
+  id           Int           @id @default(autoincrement())
+  title        String
+  description  String
+  creatorId    Int           @map("creator_id")
+  startTime    DateTime      @map("start_time")
+  endTime      DateTime      @map("end_time")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  creator      User          @relation("ContestCreator", fields: [creatorId], references: [id])
+  mcqQuestions McqQuestion[]
+  dsaProblems  DsaProblem[]
+
+  @@map("contests")
+}
+
+model McqQuestion {
+  id                 Int             @id @default(autoincrement())
+  contestId          Int             @map("contest_id")
+  questionText       String          @map("question_text")
+  options            Json // Changed from 'option' to 'options' to match requirements
+  correctOptionIndex Int             @map("correct_option_index")
+  points             Int             @default(1)
+  createdAt          DateTime        @default(now()) @map("created_at")
+  contest            Contest         @relation(fields: [contestId], references: [id])
+  submissions        McqSubmission[]
+
+  @@map("mcq_questions")
+}
+
+model DsaProblem {
+  id          Int             @id @default(autoincrement())
+  contestId   Int             @map("contest_id")
+  title       String
+  description String
+  tags        Json
+  points      Int             @default(100)
+  timeLimit   Int             @default(2000) @map("time_limit")
+  memoryLimit Int             @default(256) @map("memory_limit")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  contest     Contest         @relation(fields: [contestId], references: [id])
+  testCases   TestCase[]
+  submissions DsaSubmission[]
+
+  @@map("dsa_problems")
+}
+
+model TestCase {
+  id             Int        @id @default(autoincrement())
+  problemId      Int        @map("problem_id")
+  input          String
+  expectedOutput String     @map("expected_output")
+  isHidden       Boolean    @default(false) @map("is_hidden")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  problem        DsaProblem @relation(fields: [problemId], references: [id])
+
+  @@map("test_cases")
+}
+
+model McqSubmission {
+  id                  Int         @id @default(autoincrement())
+  userId              Int         @map("user_id")
+  questionId          Int         @map("question_id")
+  selectedOptionIndex Int         @map("selected_option_index") // Added missing field
+  isCorrect           Boolean     @map("is_correct")
+  pointsEarned        Int         @default(0) @map("points_earned")
+  submittedAt         DateTime    @default(now()) @map("submitted_at")
+  user                User        @relation(fields: [userId], references: [id])
+  question            McqQuestion @relation(fields: [questionId], references: [id])
+
+  @@unique([userId, questionId], name: "user_question_unique") // Composite unique constraint
+  @@map("mcq_submissions")
+}
+
+model DsaSubmission {
+  id              Int        @id @default(autoincrement())
+  userId          Int        @map("user_id")
+  problemId       Int        @map("problem_id")
+  code            String     @db.Text
+  language        String     @db.VarChar(50)
+  status          String     @db.VarChar(50)
+  pointsEarned    Int        @default(0) @map("points_earned")
+  testCasesPassed Int        @default(0) @map("test_cases_passed")
+  totalTestCases  Int        @default(0) @map("total_test_cases")
+  executionTime   Int?       @map("execution_time") // Made nullable
+  submittedAt     DateTime   @default(now()) @map("submitted_at")
+  user            User       @relation(fields: [userId], references: [id])
+  problem         DsaProblem @relation(fields: [problemId], references: [id])
+
+  @@map("dsa_submissions")
+}
