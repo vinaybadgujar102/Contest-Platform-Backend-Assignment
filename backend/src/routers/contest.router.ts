@@ -12,4 +12,10 @@ contestRouter.post(
   ContestController.createContest,
 );
 
+contestRouter.get(
+  "/:contestId",
+  authMiddleware,
+  ContestController.getContestById,
+);
+
 export default contestRouter;
