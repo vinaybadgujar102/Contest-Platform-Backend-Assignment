@@ -7,3 +7,5 @@ export const signupSchema = z.object({
   password: z.string().min(6),
   role: z.enum(UserRole),
 });
+
+export type SignupInput = z.infer<typeof signupSchema>;
