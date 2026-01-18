@@ -8,3 +8,9 @@ export const createMcqSchema = z.object({
 });
 
 export type CreateMcqInput = z.infer<typeof createMcqSchema>;
+
+export const submitMcqSchema = z.object({
+  selectedOptionIndex: z.number(),
+});
+
+export type submitMcqInput = z.infer<typeof submitMcqSchema>;

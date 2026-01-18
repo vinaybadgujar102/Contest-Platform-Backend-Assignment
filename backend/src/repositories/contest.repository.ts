@@ -21,6 +21,12 @@ export class ContestRepository {
     });
   }
 
+  async getContestById(contestId: number) {
+    return await prisma.contest.findUnique({
+      where: { id: contestId },
+    });
+  }
+
   async getContestByIdWithProblems(contestId: number) {
     const contest = await prisma.contest.findFirst({
       where: {

@@ -92,8 +92,8 @@ model TestCase {
 
 model McqSubmission {
   id                  Int         @id @default(autoincrement())
-  userId              Int         @map("user_id")
-  questionId          Int         @map("question_id")
+  userId              Int         @unique @map("user_id")
+  questionId          Int         @unique @map("question_id")
   selectedOptionIndex Int         @map("selected_option_index") // Added missing field
   isCorrect           Boolean     @map("is_correct")
   pointsEarned        Int         @default(0) @map("points_earned")
@@ -101,7 +101,6 @@ model McqSubmission {
   user                User        @relation(fields: [userId], references: [id])
   question            McqQuestion @relation(fields: [questionId], references: [id])
 
-  @@unique([userId, questionId], name: "user_question_unique") // Composite unique constraint
   @@map("mcq_submissions")
 }
 
